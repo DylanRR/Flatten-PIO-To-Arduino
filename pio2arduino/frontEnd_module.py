@@ -2,6 +2,7 @@
 import tkinter as tk
 from tkinter import filedialog, ttk  # Import ttk
 from fileParsing_module import compileProject
+import threading
 
 class Application(tk.Frame):
   def __init__(self, master=None):
@@ -47,16 +48,23 @@ class Application(tk.Frame):
   def create_listbox_widget(self):
     # Create a frame for the listbox and scrollbar
     self.listbox_frame = tk.Frame(self)
-    self.listbox_frame.grid(row=4, column=0, columnspan=2, sticky="ew", padx=5, pady=5)
+    self.listbox_frame.grid(row=4, column=0, columnspan=2, sticky="nsew", padx=5, pady=5)
 
-    # Create the listbox
-    self.listbox = tk.Listbox(self.listbox_frame)
+    # Create the vertical scrollbar
+    self.yscrollbar = tk.Scrollbar(self.listbox_frame, orient='vertical')
+    self.yscrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+
+    # Create the horizontal scrollbar
+    self.xscrollbar = tk.Scrollbar(self.listbox_frame, orient='horizontal')
+    self.xscrollbar.pack(side=tk.BOTTOM, fill=tk.X)
+
+    # Create the listbox and associate it with the scrollbars
+    self.listbox = tk.Listbox(self.listbox_frame, xscrollcommand=self.xscrollbar.set, yscrollcommand=self.yscrollbar.set)
     self.listbox.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 
-    # Create the scrollbar and associate it with the listbox
-    self.scrollbar = tk.Scrollbar(self.listbox_frame, command=self.listbox.yview)
-    self.scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
-    self.listbox.config(yscrollcommand=self.scrollbar.set)
+    # Configure the scrollbars to update the listbox view
+    self.yscrollbar.config(command=self.listbox.yview)
+    self.xscrollbar.config(command=self.listbox.xview)
 
     self.grid_columnconfigure(1, weight=1)
 
@@ -82,16 +90,13 @@ class Application(tk.Frame):
   def compile(self):
     self.project_name = self.project_name_entry.get()
     self.create_listbox_widget()
-    self.add_message(self, "Compiling...")
-    compileProject(self.main_dir, self.save_dir, self.project_name, self.add_message)
-    #TODO: This is where all the calls to the outside parsers will be made
-    #call a parser
-    #add_message
-    #call another parser
-    #add_message
-    #repeat until all parsers are called
+    self.add_message("Compiling...")
+    threading.Thread(target=compileProject, args=(self.main_dir, self.save_dir, self.project_name, self.add_message)).start()
 
-  def add_message(self, message):
+  def add_message(self, message): # Thread-safe, use the after method to schedule the gui update
+    self.listbox.after(0, self._add_message, message)
+
+  def _add_message(self, message): # Not thread-safe
     self.listbox.insert(tk.END, message)
     self.listbox.see(tk.END)
 

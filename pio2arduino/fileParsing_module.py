@@ -4,9 +4,7 @@ import glob
 import re
 import errno
 
-debug_print = True
-
-
+_DEBUG_PRINT = True
 
 def compileProject(main_dir, save_dir, project_name, addMessage):
   isSuccess = buildDir(save_dir, project_name, addMessage)
@@ -119,7 +117,7 @@ def getAllFiles(save_dir, project_name):
     debugPrint(e)
     return False, None
   
-def updateIncludes(all_files):
+def updateIncludes(all_files, addMessage):
   parsed_includes = 0
   try:
     for file_path in all_files:
@@ -131,6 +129,7 @@ def updateIncludes(all_files):
           parsed_includes += 1
       with open(file_path, 'wb') as file:
           file.write(content.encode('utf-8'))
+    addMessage(f'Successfully parsed {parsed_includes} #include statements in all files')
     return True
   except Exception as e:
     debugPrint(e)
@@ -149,5 +148,5 @@ def deleteMainCpp(save_dir, project_name, addMessage):
     return False
   
 def debugPrint(message):
-  if debug_print:
+  if _DEBUG_PRINT:
     print(message)
