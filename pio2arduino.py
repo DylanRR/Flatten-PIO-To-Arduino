@@ -10,20 +10,20 @@ root = tk.Tk()
 root.withdraw()
 
 # Prompt the user for the project name
-project_name = simpledialog.askstring("Input", "Enter the project name:", parent=root)
+project_name = simpledialog.askstring("Input", "Enter the project name:", parent=root)  #Exported
 
 # Prompt the user to select the main directory
-main_dir = filedialog.askdirectory(title="Select the main directory")
+main_dir = filedialog.askdirectory(title="Select the main directory") #Exported
 
 # Prompt the user to select the save directory
-save_dir = filedialog.askdirectory(title="Select the directory to save the new project to")
+save_dir = filedialog.askdirectory(title="Select the directory to save the new project to") #Exported
 
 # Create a new directory with the project name in the save directory
-os.makedirs(os.path.join(save_dir, project_name), exist_ok=True)
+os.makedirs(os.path.join(save_dir, project_name), exist_ok=True) #Exported
 print(f'successfully created new directory @ {os.path.join(save_dir, project_name)}')
 
 # Copy and rename main.cpp to main.ino
-shutil.copy2(f'{main_dir}/src/main.cpp', f'{os.path.join(save_dir, project_name)}/{project_name}.ino')
+shutil.copy2(f'{main_dir}/src/main.cpp', f'{os.path.join(save_dir, project_name)}/{project_name}.ino') #Exported
 print(f'successfully found main.cpp and renamed it to {project_name}.ino')
 
 print('Searching src directory.................')
@@ -31,14 +31,14 @@ print('Searching src directory.................')
 for file in glob.glob(f'{main_dir}/src/*'):
     if file != f'{main_dir}/src/main.cpp':
         shutil.copy2(file, os.path.join(save_dir, project_name))
-        print(f'Found and copied {os.path.basename(file)} to the {os.path.join(save_dir, project_name)} folder')
+        print(f'Found and copied {os.path.basename(file)} to the {os.path.join(save_dir, project_name)} folder') #Exported
 
 print('Searching lib directory.................')
 # Copy all library files from the lib directory to the new directory
 for dir in glob.glob(f'{main_dir}/lib/*'):
     for file in glob.glob(f'{dir}/src/*'):
         shutil.copy2(file, os.path.join(save_dir, project_name))
-        print(f'Found and copied {os.path.basename(file)} to the {os.path.join(save_dir, project_name)} folder')
+        print(f'Found and copied {os.path.basename(file)} to the {os.path.join(save_dir, project_name)} folder') #Exported
 
 
 print('Searching .pio/libdeps directory.................')
@@ -48,8 +48,7 @@ for root, dirs, files in os.walk(f'{main_dir}/.pio/libdeps'):
     for file in files:
         if file.endswith(('.h', '.cpp', '.c')):
             shutil.copy2(os.path.join(root, file), os.path.join(save_dir, project_name))
-            print(f'Found and copied {file} to the {os.path.join(save_dir, project_name)} folder')
-
+            print(f'Found and copied {file} to the {os.path.join(save_dir, project_name)} folder') #Exported
 print('Gathering all .h, .cpp, and .c files.................')
 # Get a list of all .h, .cpp, and .c files in the new directory
 all_files = glob.glob(f'{os.path.join(save_dir, project_name)}/*.h') + glob.glob(f'{os.path.join(save_dir, project_name)}/*.cpp') + glob.glob(f'{os.path.join(save_dir, project_name)}/*.c') + glob.glob(f'{os.path.join(save_dir, project_name)}/*.ino')
