@@ -1,6 +1,7 @@
 # frontEnd_module.py
 import tkinter as tk
 from tkinter import filedialog, ttk  # Import ttk
+from fileParsing_module import compileProject
 
 class Application(tk.Frame):
   def __init__(self, master=None):
@@ -81,8 +82,8 @@ class Application(tk.Frame):
   def compile(self):
     self.project_name = self.project_name_entry.get()
     self.create_listbox_widget()
-    # Add a message to the listbox
-    add_message(self, "Compiling...")
+    self.add_message(self, "Compiling...")
+    compileProject(self.main_dir, self.save_dir, self.project_name, self.add_message)
     #TODO: This is where all the calls to the outside parsers will be made
     #call a parser
     #add_message
@@ -90,16 +91,14 @@ class Application(tk.Frame):
     #add_message
     #repeat until all parsers are called
 
+  def add_message(self, message):
+    self.listbox.insert(tk.END, message)
+    self.listbox.see(tk.END)
 
 def init_gui():
   root = tk.Tk()
   app = Application(master=root)
   app.mainloop()
 
-def add_message(self, message):
-  # Add the message to the listbox
-  self.listbox.insert(tk.END, message)
 
-  # Automatically scroll to the bottom of the listbox
-  self.listbox.see(tk.END)
 
