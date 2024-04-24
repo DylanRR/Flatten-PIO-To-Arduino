@@ -3,11 +3,14 @@ import shutil
 import glob
 import re
 
+debug_print = True
+
 def buildDir(save_dir, project_name):
   try:
     os.makedirs(os.path.join(save_dir, project_name), exist_ok=True)
     return True
   except Exception as e:
+    debugPrint(e)
     return False
     
 def copyMain(main_dir, save_dir, project_name):
@@ -15,6 +18,7 @@ def copyMain(main_dir, save_dir, project_name):
     shutil.copy2(f'{main_dir}/src/main.cpp', f'{os.path.join(save_dir, project_name)}/{project_name}.ino')
     return True
   except Exception as e:
+    debugPrint(e)
     return False
     
 def copySrc(main_dir, save_dir, project_name):
@@ -26,6 +30,7 @@ def copySrc(main_dir, save_dir, project_name):
         copied_filed.append(os.path.basename(file))
     return True, copied_filed
   except Exception as e:
+    debugPrint(e)
     return False, None
   
 def copyLib(main_dir, save_dir, project_name):
@@ -37,6 +42,7 @@ def copyLib(main_dir, save_dir, project_name):
         copied_filed.append(os.path.basename(file))
     return True, copied_filed
   except Exception as e:
+    debugPrint(e)
     return False, None
   
 def copyLibDeps(main_dir, save_dir, project_name):
@@ -50,6 +56,7 @@ def copyLibDeps(main_dir, save_dir, project_name):
           copied_filed.append(file)
     return True, copied_filed
   except Exception as e:
+    debugPrint(e)
     return False, None
   
 def getAllFiles(save_dir, project_name):
@@ -57,6 +64,7 @@ def getAllFiles(save_dir, project_name):
     all_files = glob.glob(f'{os.path.join(save_dir, project_name)}/*.h') + glob.glob(f'{os.path.join(save_dir, project_name)}/*.cpp') + glob.glob(f'{os.path.join(save_dir, project_name)}/*.c') + glob.glob(f'{os.path.join(save_dir, project_name)}/*.ino')
     return True, all_files
   except Exception as e:
+    debugPrint(e)
     return False, None
   
 def updateIncludes(all_files):
@@ -73,6 +81,7 @@ def updateIncludes(all_files):
           file.write(content.encode('utf-8'))
     return True, parsed_includes
   except Exception as e:
+    debugPrint(e)
     return False, None
   
 def deleteMainCpp(save_dir, project_name):
@@ -82,4 +91,9 @@ def deleteMainCpp(save_dir, project_name):
       os.remove(main_cpp_path)
     return True
   except Exception as e:
+    debugPrint(e)
     return False
+  
+def debugPrint(message):
+  if debug_print:
+    print(message)
