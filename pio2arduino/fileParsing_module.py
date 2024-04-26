@@ -123,6 +123,7 @@ def updateIncludes(all_files, addMessage):
     for file_path in all_files:
       with open(file_path, 'rb') as file:
           content = file.read().decode('utf-8', errors='ignore')
+          content = re.sub(r'#include "([^"]*[\\/])([^\\/"]*)"', r'#include "\2"', content)
       for include_file in all_files:
           file_name = os.path.basename(include_file)
           content = re.sub(f'#include <{re.escape(file_name)}>', f'#include "{file_name}"', content)
@@ -133,7 +134,7 @@ def updateIncludes(all_files, addMessage):
     return True
   except Exception as e:
     debugPrint(e)
-    return False, None
+    return False
   
 def deleteMainCpp(save_dir, project_name, addMessage):
   try:
